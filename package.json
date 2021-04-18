@@ -1,0 +1,19 @@
+{
+  "name": "zotero-sync-couchbase",
+  "version": "1.0.0",
+  "description": "Couchbase store for @retorquere/zotero-sync",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@retorquere/zotero-sync": "^1.0.11",
+    "couchbase": "^3.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
