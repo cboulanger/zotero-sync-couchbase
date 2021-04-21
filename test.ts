@@ -45,6 +45,9 @@ const Gauge = require('gauge');
     // configure visual feedback
     const gauge = new Gauge;
     syncEngine.on(Sync.event.library, (name, index, total) => {
+        if (!name) {
+            name = "User library";
+        }
         gauge.show(`Saving library "${name}" (${index}/${total})`, index/total);
     });
     syncEngine.on(Sync.event.remove, (type, total) => {
