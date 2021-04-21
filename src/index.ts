@@ -196,7 +196,6 @@ export class Store implements Zotero.Store {
     } catch(e : Error | any) {
       console.error(e);
     }
-
     this.libraries = this.libraries.filter(prefix => prefix !== user_or_group_prefix);
   }
 
@@ -238,6 +237,13 @@ export class Library implements Zotero.Library {
   }
 
   /**
+   * Returns "user" or "group"
+   */
+  public getType(): string {
+    return this.user_or_group_prefix.startsWith("/users") ? "user" : "group";
+  }
+
+  /**
    * Initialize the library instance. This creates the necessary couchbase
    * collections. Resolves with the library instance when done.
    */
@@ -251,6 +257,15 @@ export class Library implements Zotero.Library {
       const cbColl = await createCbCollection(bucket, scopeName, collectionName, this.store.timeout);
       await createPrimaryIndex(cluster, bucket.name, scopeName, collectionName, this.store.timeout);
       this.cbCollections.set(collectionName, cbColl);
+    }
+    const metaCollection = this.cbCollections.get("meta") as Collection;
+    try {
+      this.name = (await metaCollection.get("name")).content;
+      this.version = (await metaCollection.get("version")).content;
+    } catch (e) {
+      if (!e.message.includes("document not found")){
+        throw e;
+      }
     }
     return this;
   }

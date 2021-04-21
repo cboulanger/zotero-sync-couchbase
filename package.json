@@ -17,7 +17,7 @@
   "author": "Christian Boulanger (@cboulanger) infoy@bibliograph.org",
   "license": "ISC",
   "dependencies": {
-    "@retorquere/zotero-sync": "^1.0.12",
+    "@retorquere/zotero-sync": "^1.0.20",
     "couchbase": "^3.1.2"
   },
   "devDependencies": {

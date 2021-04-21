@@ -1,4 +1,5 @@
 import { Sync } from '@retorquere/zotero-sync/index'
+import type { Zotero } from '@retorquere/zotero-sync/typings/zotero'
 import { Store, StoreOptions } from './src'
 import process from 'process';
 import dotenv from 'dotenv';
@@ -44,30 +45,31 @@ const Gauge = require('gauge');
 
     // configure visual feedback
     const gauge = new Gauge;
-    syncEngine.on(Sync.event.library, (name, index, total) => {
-        if (!name) {
-            name = "User library";
-        }
-        gauge.show(`Saving library "${name}" (${index}/${total})`, index/total);
+    syncEngine.on(Sync.event.library, (library: {type:string, name: string }, index: number, total: number) => {
+        let name = library.type === "group" ? library.name : "User library";
+        gauge.show(`Synchronizing library "${name}" (${index}/${total})`, index/total);
     });
-    syncEngine.on(Sync.event.remove, (type, total) => {
-        gauge.show(`Removing ${total} ${type}`);
+    syncEngine.on(Sync.event.remove, (type: string, objects: string[]) => {
+        gauge.show(`Removing ${objects.length} ${type}`);
     });
-    syncEngine.on(Sync.event.collection, (index, total) => {
+    syncEngine.on(Sync.event.collection, (collection: Zotero.Collection, index: number, total: number) => {
         gauge.show(`Saving collection ${index}/${total}`, index/total);
     });
-    syncEngine.on(Sync.event.item, (index, total) => {
+    syncEngine.on(Sync.event.item, (item: Zotero.Item.Any, index, total) => {
         gauge.show(`Saving item ${index}/${total}`, index/total);
     });
 
     // error handling
     syncEngine.on(Sync.event.error, e => {
-        throw e;
+        gauge.hide();
+        console.error(`Error during task "${gauge._status.section.replace(/"/g,"'")}": ${e.message}`);
     });
 
     // synchronize with the couchbase store
     const store = new Store(COUCHBASE_URL, COUCHBASE_USER, COUCHBASE_PASSWORD, storeOptions);
     await syncEngine.sync(store);
+    gauge.hide();
+    process.exit(0);
 })().catch(err => {
     console.log(err)
     process.exit(1)
