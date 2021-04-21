@@ -1,19 +1,30 @@
 {
-  "name": "zotero-sync-couchbase",
+  "name": "@cboulanger/zotero-sync-couchbase",
   "version": "1.0.0",
   "description": "Couchbase store for @retorquere/zotero-sync",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && npx ts-node test.ts",
+    "tsc": "tsc -d",
+    "prepublishOnly": "npm install && npm run tsc",
+    "go": "npm run tsc && npm version patch && npm publish --access public",
+    "postversion": "git push --follow-tags"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "zotero",
+    "zotero-sync"
+  ],
+  "author": "Christian Boulanger (@cboulanger) infoy@bibliograph.org",
   "license": "ISC",
   "dependencies": {
-    "@retorquere/zotero-sync": "^1.0.11",
+    "@retorquere/zotero-sync": "^1.0.12",
     "couchbase": "^3.1.2"
   },
   "devDependencies": {
+    "@types/node": "^14.14.41",
+    "dotenv": "^8.2.0",
+    "gauge": "^2.7.4",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   }
 }
