@@ -7,7 +7,7 @@ This implementation allows to backup Zotero libraries in a
 https://www.couchbase.com database. Zotero data is stored as JSON data in
 Couchbase collections that are named after the synchronized object types
 ("items", "collections" only), which are themselves stored in Couchbase scopes
-that are named "g<group id>" or "u<user id>".
+that are named "g\<group id>" or "u\<user id>".
 
 ## Usage
 
