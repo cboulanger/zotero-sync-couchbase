@@ -2,7 +2,7 @@
   "name": "@cboulanger/zotero-sync-couchbase",
   "version": "1.0.0",
   "description": "Couchbase store for @retorquere/zotero-sync",
-  "main": "src/index.ts",
+  "main": "src/index.js",
   "scripts": {
     "test": "tsc && npx ts-node test.ts",
     "tsc": "tsc -d",
@@ -10,6 +10,13 @@
     "go": "npm run tsc && npm version patch && npm publish --access public",
     "postversion": "git push --follow-tags"
   },
+  "files": [
+    "README.md",
+    "src/index.js",
+    "src/index.d.ts",
+    "package.json",
+    "tsconfig.json"
+  ],
   "keywords": [
     "zotero",
     "zotero-sync"
