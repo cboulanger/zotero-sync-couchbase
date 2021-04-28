@@ -1,6 +1,6 @@
 {
   "name": "@cboulanger/zotero-sync-couchbase",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Couchbase store for @retorquere/zotero-sync",
   "main": "src/index.js",
   "scripts": {
