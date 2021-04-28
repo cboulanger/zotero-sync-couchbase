@@ -15,16 +15,19 @@
     "src/index.js",
     "src/index.d.ts",
     "package.json",
-    "tsconfig.json"
+    "tsconfig.json",
+    "test.ts",
+    ".env.dist"
   ],
   "keywords": [
     "zotero",
-    "zotero-sync"
+    "zotero-sync",
+    "couchbase"
   ],
   "author": "Christian Boulanger (@cboulanger) infoy@bibliograph.org",
   "license": "ISC",
   "dependencies": {
-    "@retorquere/zotero-sync": "^1.0.20",
+    "@retorquere/zotero-sync": "^1.0.23",
     "couchbase": "^3.1.2"
   },
   "devDependencies": {
