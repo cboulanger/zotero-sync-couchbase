@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@retorquere/zotero-sync": "^1.0.23",
-    "couchbase": "^3.1.2"
+    "couchbase": "3.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.41",

@@ -13,10 +13,11 @@ const Gauge = require('gauge');
         ZOTERO_API_KEY,
         COUCHBASE_URL,
         COUCHBASE_USER,
-        COUCHBASE_PASSWORD
+        COUCHBASE_PASSWORD,
+        COUCHBASE_BUCKET
     } = process.env as {[key : string]: string};
     const storeOptions : StoreOptions = {
-        bucketName : "testZoteroSync"
+        bucketName : COUCHBASE_BUCKET as string
     }
 
     // create couchbase bucket for our test
@@ -25,7 +26,7 @@ const Gauge = require('gauge');
         password: COUCHBASE_PASSWORD
     });
     const bucketSettings = {
-        name: storeOptions.bucketName as string,
+        name: storeOptions.bucketName,
         ramQuotaMB: 200,
         bucketType: BucketType.Couchbase,
     }
