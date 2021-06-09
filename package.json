@@ -4,7 +4,7 @@
   "description": "Couchbase store for @retorquere/zotero-sync",
   "main": "src/index.js",
   "scripts": {
-    "test": "tsc && npx ts-node test.ts",
+    "test": "tsc && ts-node test.ts",
     "tsc": "tsc -d",
     "prepublishOnly": "npm install && npm run tsc",
     "go": "npm run tsc && npm version patch && npm publish --access public",
