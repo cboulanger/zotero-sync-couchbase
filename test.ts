@@ -1,9 +1,9 @@
 import { Sync } from '@retorquere/zotero-sync/index'
 import type { Zotero } from '@retorquere/zotero-sync/typings/zotero'
 import { Store, StoreOptions } from './src'
-import process from 'process';
-import dotenv from 'dotenv';
-import { connect  } from 'couchbase';
+import * as process from 'process';
+import * as dotenv from 'dotenv';
+import { connect } from 'couchbase';
 const Gauge = require('gauge');
 
 (async () => {
@@ -16,28 +16,9 @@ const Gauge = require('gauge');
         COUCHBASE_PASSWORD,
         COUCHBASE_BUCKET
     } = process.env as {[key : string]: string};
+
     const storeOptions : StoreOptions = {
         bucketName : COUCHBASE_BUCKET as string
-    }
-
-    // create couchbase bucket for our test
-    const cluster = await connect(COUCHBASE_URL, {
-        username: COUCHBASE_USER,
-        password: COUCHBASE_PASSWORD
-    });
-    const bucketSettings = {
-        name: storeOptions.bucketName,
-        ramQuotaMB: 200,
-        bucketType: BucketType.Couchbase,
-    }
-    try {
-        // @ts-ignore
-        await cluster.buckets().createBucket(bucketSettings); // parameter typing is incorrect in couchbase source
-        await cluster.queryIndexes().createPrimaryIndex(storeOptions.bucketName as string);
-    } catch (e) {
-        if (!e.message.includes('bucket exists') ) {
-            throw e;
-        }
     }
 
     // initialize the sync engine
