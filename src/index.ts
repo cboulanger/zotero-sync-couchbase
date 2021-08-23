@@ -69,7 +69,8 @@ async function createPrimaryIndex(cluster: Cluster, bucketName: string, scopeNam
     await cluster.query(query);
     //console.log(`Created primary index on default:${this.bucketName}.${scopeName}.${collectionName}`);
   } catch (e) {
-    if (e.context && e.context.first_error_message && e.context.first_error_message.includes("already exists")) {
+    let err = e.context ? e.context : e;
+    if (err.first_error_message && err.first_error_message.includes("already exists")) {
       return;
     }
     throw e;
