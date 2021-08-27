@@ -285,15 +285,18 @@ export class Library implements Zotero.Library {
    */
   public async add_collection(collection: Zotero.Collection): Promise<void> {
     const cbCollection = this.cbCollections.get("collections") as Collection;
-    if (!collection || !collection.key) {
-      let error = new Error("Invalid data: " + JSON.stringify(collection, null, 2));
+    try {
+      await cbCollection.upsert(collection.key, collection);
+    } catch (e) {
+      let error = new Error(`Error '${e.message}' when saving the following collection: ` +
+        JSON.stringify(collection, null, 2));
+      error.stack += e.stack;
       if (this.store.options.throwSyncErrors) {
         throw error;
       }
       console.error(error.message);
       return;
     }
-    await cbCollection.upsert(collection.key, collection);
   }
 
 
@@ -320,15 +323,18 @@ export class Library implements Zotero.Library {
    */
   public async add(item: Zotero.Item.Any): Promise<void> {
     const cbCollection = this.cbCollections.get("items") as Collection;
-    if (!item || !item.key) {
-      let error = new Error("Invalid data: " + JSON.stringify(item, null, 2));
+    try {
+      await cbCollection.upsert(item.key, item);
+    } catch (e) {
+      let error = new Error(`Error '${e.message}' when saving the following item: ` +
+        JSON.stringify(item, null, 2));
+      error.stack += e.stack;
       if (this.store.options.throwSyncErrors) {
         throw error;
       }
       console.error(error.message);
       return;
     }
-    await cbCollection.upsert(item.key, item);
   }
 
   /**
