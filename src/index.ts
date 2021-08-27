@@ -114,25 +114,33 @@ export interface StoreOptions {
    * the needed objects asynchronously ; defaults to 5000 ms
    */
   timeout?: number
+
+  /**
+   * If true (default), throw sync errors, if false just log them
+   */
+  throwSyncErrors?: boolean
 }
 
 export class Store implements Zotero.Store {
 
   public libraries : string[];
   public readonly timeout: number;
+  public readonly options: StoreOptions;
+  public readonly bucketName: string;
 
   // internal config
   private readonly url: string;
   private readonly username: string;
   private readonly password: string;
-  private readonly options: StoreOptions;
-  private readonly bucketName: string;
   private cluster?: Cluster;
 
   constructor(url: string, username: string, password: string, options: StoreOptions = {}) {
     this.url = url;
     this.username = username;
     this.password = password;
+    if (!("throwSyncErrors" in options)) {
+      options.throwSyncErrors = true;
+    }
     this.options = options;
     this.bucketName = options.bucketName || "zotero";
     this.timeout = options.timeout || 5000;
@@ -278,8 +286,14 @@ export class Library implements Zotero.Library {
   public async add_collection(collection: Zotero.Collection): Promise<void> {
     const cbCollection = this.cbCollections.get("collections") as Collection;
     let key = collection.key;
-    if (!key) {
-      throw new Error("Empty key not allowed");
+    if (!key || !collection.data) {
+      console.dir(collection,{depth:5})
+      let error = new Error("Empty collection key or data not allowed.");
+      if (this.store.options.throwSyncErrors) {
+        throw error;
+      }
+      console.error(error.message);
+      return;
     }
     await cbCollection.upsert(key, collection);
   }
@@ -310,7 +324,12 @@ export class Library implements Zotero.Library {
     const cbCollection = this.cbCollections.get("items") as Collection;
     let key = item.key;
     if (!key) {
-      throw new Error("Empty key not allowed");
+      let error = new Error("Empty item key not allowed");
+      if (this.store.options.throwSyncErrors) {
+        throw error;
+      }
+      console.error(error.message);
+      return;
     }
     await cbCollection.upsert(key, item);
   }
