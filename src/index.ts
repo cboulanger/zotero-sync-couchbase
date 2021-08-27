@@ -277,7 +277,11 @@ export class Library implements Zotero.Library {
    */
   public async add_collection(collection: Zotero.Collection): Promise<void> {
     const cbCollection = this.cbCollections.get("collections") as Collection;
-    await cbCollection.upsert(collection.key, collection);
+    let key = collection.key;
+    if (!key) {
+      throw new Error("Empty key not allowed");
+    }
+    await cbCollection.upsert(key, collection);
   }
 
 
@@ -304,7 +308,11 @@ export class Library implements Zotero.Library {
    */
   public async add(item: Zotero.Item.Any): Promise<void> {
     const cbCollection = this.cbCollections.get("items") as Collection;
-    await cbCollection.upsert(item.key, item);
+    let key = item.key;
+    if (!key) {
+      throw new Error("Empty key not allowed");
+    }
+    await cbCollection.upsert(key, item);
   }
 
   /**

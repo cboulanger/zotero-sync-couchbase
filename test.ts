@@ -45,6 +45,7 @@ const Gauge = require('gauge');
     syncEngine.on(Sync.event.error, e => {
         gauge.hide();
         console.error(`Error during task "${gauge._status.section.replace(/"/g,"'")}": ${e.message}`);
+        throw e;
     });
 
     // synchronize with the couchbase store
