@@ -285,17 +285,15 @@ export class Library implements Zotero.Library {
    */
   public async add_collection(collection: Zotero.Collection): Promise<void> {
     const cbCollection = this.cbCollections.get("collections") as Collection;
-    let key = collection.key;
-    if (!key || !collection.data) {
-      console.dir(collection,{depth:5})
-      let error = new Error("Empty collection key or data not allowed.");
+    if (!collection || !collection.key) {
+      let error = new Error("Invalid data: " + JSON.stringify(collection, null, 2));
       if (this.store.options.throwSyncErrors) {
         throw error;
       }
       console.error(error.message);
       return;
     }
-    await cbCollection.upsert(key, collection);
+    await cbCollection.upsert(collection.key, collection);
   }
 
 
@@ -322,16 +320,15 @@ export class Library implements Zotero.Library {
    */
   public async add(item: Zotero.Item.Any): Promise<void> {
     const cbCollection = this.cbCollections.get("items") as Collection;
-    let key = item.key;
-    if (!key) {
-      let error = new Error("Empty item key not allowed");
+    if (!item || !item.key) {
+      let error = new Error("Invalid data: " + JSON.stringify(item, null, 2));
       if (this.store.options.throwSyncErrors) {
         throw error;
       }
       console.error(error.message);
       return;
     }
-    await cbCollection.upsert(key, item);
+    await cbCollection.upsert(item.key, item);
   }
 
   /**

@@ -18,7 +18,8 @@ const Gauge = require('gauge');
     } = process.env as {[key : string]: string};
 
     const storeOptions : StoreOptions = {
-        bucketName : COUCHBASE_BUCKET as string
+        bucketName : COUCHBASE_BUCKET as string,
+        throwSyncErrors: false
     }
 
     // initialize the sync engine
