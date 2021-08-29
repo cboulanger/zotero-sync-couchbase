@@ -118,7 +118,12 @@ export interface StoreOptions {
   /**
    * If true (default), throw sync errors, if false just log them
    */
-  throwSyncErrors?: boolean
+  throwSyncErrors?: boolean,
+
+  /**
+   * Name that is stored for the User Library
+   */
+  userLibraryName?: string
 }
 
 export class Store implements Zotero.Store {
@@ -140,6 +145,9 @@ export class Store implements Zotero.Store {
     this.password = password;
     if (!("throwSyncErrors" in options)) {
       options.throwSyncErrors = true;
+    }
+    if (!options.userLibraryName) {
+      options.userLibraryName = "User library"
     }
     this.options = options;
     this.bucketName = options.bucketName || "zotero";
@@ -203,7 +211,10 @@ export class Store implements Zotero.Store {
     try {
       await bucket.collections().dropScope(scopeName);
     } catch(e : Error | any) {
-      console.error(e);
+      if (this.options.throwSyncErrors) {
+        throw e;
+      }
+      console.error(e.message);
     }
     this.libraries = this.libraries.filter(prefix => prefix !== user_or_group_prefix);
   }
@@ -273,7 +284,10 @@ export class Library implements Zotero.Library {
       this.version = (await metaCollection.get("version")).content;
     } catch (e) {
       if (!e.message.includes("document not found")){
-        throw e;
+        if (this.store.options.throwSyncErrors) {
+          throw e;
+        }
+        console.error(e.message);
       }
     }
     return this;
@@ -288,14 +302,10 @@ export class Library implements Zotero.Library {
     try {
       await cbCollection.upsert(collection.key, collection);
     } catch (e) {
-      let error = new Error(`Error '${e.message}' when saving the following collection: ` +
-        JSON.stringify(collection, null, 2));
-      error.stack += e.stack;
       if (this.store.options.throwSyncErrors) {
-        throw error;
+        throw e;
       }
-      console.error(error.message);
-      return;
+      console.error(e.message);
     }
   }
 
@@ -311,7 +321,10 @@ export class Library implements Zotero.Library {
         await cbCollection.remove(key);
       } catch (e) {
         if (!e.message.includes("document not found")) {
-          throw e;
+          if (this.store.options.throwSyncErrors) {
+            throw e;
+          }
+          console.error(e.message);
         }
       }
     }
@@ -326,14 +339,10 @@ export class Library implements Zotero.Library {
     try {
       await cbCollection.upsert(item.key, item);
     } catch (e) {
-      let error = new Error(`Error '${e.message}' when saving the following item: ` +
-        JSON.stringify(item, null, 2));
-      error.stack += e.stack;
       if (this.store.options.throwSyncErrors) {
-        throw error;
+        throw e;
       }
-      console.error(error.message);
-      return;
+      console.error(e.message);
     }
   }
 
@@ -348,7 +357,10 @@ export class Library implements Zotero.Library {
         await cbCollection.remove(key);
       } catch (e) {
         if (!e.message.includes("document not found")) {
-          throw e;
+          if (this.store.options.throwSyncErrors) {
+            throw e;
+          }
+          console.error(e.message);
         }
       }
     }
@@ -356,16 +368,17 @@ export class Library implements Zotero.Library {
 
   /**
    * Saves the Library
-   * @param {String?} name Descriptive Name of the library
+   * @param {String|undefined} name Descriptive Name of the library.
+   * Is empty in the case of the user library. If {@link StoreOptions.userLibraryName}
+   * is set, this name will be used, otherwise "User library".
    * @param {Number} version
    */
   public async save(name: string, version: number): Promise<void> {
+    if (!name) {
+      name = this.store.options.userLibraryName as string;
+    }
     const metaCollection = this.cbCollections.get("meta") as Collection;
     await metaCollection.upsert("version", version);
     await metaCollection.upsert("name", name);
   }
 }
-
-
-
-
